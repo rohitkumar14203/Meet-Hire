@@ -13,6 +13,7 @@ export const useAuth = () => {
     error,
   } = useSelector((state) => state.auth);
 
+
   const login = (credentials) => {
     return dispatch(loginThunk(credentials));
   };

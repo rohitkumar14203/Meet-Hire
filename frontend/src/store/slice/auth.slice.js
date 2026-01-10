@@ -15,11 +15,13 @@ export const loginThunk = createAsyncThunk(
   }
 );
 
+// fake persistence (localStorage
+const savedAuth = JSON.parse(localStorage.getItem("auth"));
 const initialState = {
-  user: null,
-  role: null,
-  token: null,
-  isAuthenticated: false,
+  user: savedAuth?.user || null,
+  role: savedAuth?.user?.role || null,
+  token: savedAuth?.token || null,
+  isAuthenticated: !!savedAuth,
   loading: false,
   error: null,
 };
@@ -28,7 +30,10 @@ export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    logout: () => initialState,
+    logout: () => {
+      localStorage.removeItem("auth");
+      return initialState;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -38,14 +43,24 @@ export const authSlice = createSlice({
         state.error = null;
       })
 
-      // LOGIN SUCCESS
+      // LOGIN SUCCESS fake
       .addCase(loginThunk.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user;
         state.role = action.payload.user.role;
         state.token = action.payload.token;
         state.isAuthenticated = true;
+
+        // 🔥 PERSIST AUTH
+        localStorage.setItem(
+          "auth",
+          JSON.stringify({
+            user: action.payload.user,
+            token: action.payload.token,
+          })
+        );
       })
+
 
       // LOGIN ERROR
       .addCase(loginThunk.rejected, (state, action) => {

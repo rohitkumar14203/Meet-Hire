@@ -1,18 +1,19 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/auth/Login";
 import { HRDashboard } from "./pages/hr/Dashboard";
-import {InterviewerDashboard} from "./pages/interviewer/Dashboard";
-import {CandidateDashboard} from "./pages/candidate/Dashboard";
+import { InterviewerDashboard } from "./pages/interviewer/Dashboard";
+import { CandidateDashboard } from "./pages/candidate/Dashboard";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import RootRedirect from "./routes/RootRedirect";
 import { Signup } from "./pages/auth/Signup";
+import Jobs from "./pages/hr/Jobs";
 
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* ROOT ROUTE (THIS FIXES YOUR ERROR) */}
+
         <Route path="/" element={<RootRedirect />} />
 
         {/* AUTH */}
@@ -27,6 +28,15 @@ export default function App() {
           element={
             <ProtectedRoute allowedRoles={["HR"]}>
               <HRDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/hr/jobs"
+          element={
+            <ProtectedRoute allowedRoles={["HR"]}>
+              <Jobs />
             </ProtectedRoute>
           }
         />
