@@ -4,14 +4,13 @@
   "description": "",
   "license": "ISC",
   "author": "",
-  "type": "commonjs",
+  "type": "module",
   "main": "index.js",
-
   "scripts": {
     "start": "node backend/server.js",
     "backend": "nodemon backend/server.js",
     "frontend": "npm run dev ---prefix frontend",
-    "dev":"concurrently \"npm run backend\" \"npm run frontend\""
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\""
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
