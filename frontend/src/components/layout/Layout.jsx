@@ -3,7 +3,7 @@ import {Navbar} from "./Navbar";
 
 export const Layout = ({ children }) => {
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gradient-to-br from-blue-50/30 via-white to-blue-50/20">
       {/* Sidebar */}
       <Sidebar />
 

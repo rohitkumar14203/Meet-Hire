@@ -7,9 +7,19 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import RootRedirect from "./routes/RootRedirect";
 import { Signup } from "./pages/auth/Signup";
 import Jobs from "./pages/hr/Jobs";
+import { useEffect } from "react";
+import { useAuth } from "./hooks/useAuth";
+import { Candidates } from "./pages/hr/Candidates";
 
 
 export default function App() {
+  const { getProfile } = useAuth();
+
+  useEffect(() => {
+    // Check authentication status on app mount
+    getProfile();
+  }, []);
+
   return (
     <BrowserRouter>
       <Routes>
@@ -37,6 +47,15 @@ export default function App() {
           element={
             <ProtectedRoute allowedRoles={["HR"]}>
               <Jobs />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/hr/candidates"
+          element={
+            <ProtectedRoute allowedRoles={["HR"]}>
+              <Candidates />
             </ProtectedRoute>
           }
         />
