@@ -2,10 +2,10 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 export default function ProtectedRoute({ allowedRoles, children }) {
-  const { isAuthenticated, role, loading } = useAuth();
+  const { isAuthenticated, role, authChecked } = useAuth();
 
   // While checking auth (important)
-  if (loading) {
+  if (!authChecked) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p>Loading...</p>

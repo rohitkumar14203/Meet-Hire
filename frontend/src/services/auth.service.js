@@ -1,40 +1,16 @@
-// import { axiosInstance } from "../api/axiosInstance";
-
-// export const login = async (credentials) => {
-//     const response = await axiosInstance.post("/auth/login", credentials);
-//     return response.data;
-// }
-
-
-
-// src/services/auth.service.js
-
-// Toggle for development
-const USE_FAKE_AUTH = true;
+import { axiosInstance } from "../api/axiosInstance";
 
 export const login = async (credentials) => {
-  if (USE_FAKE_AUTH) {
-    // simulate network delay
-    await new Promise((res) => setTimeout(res, 700));
+    const response = await axiosInstance.post("auth/login", credentials);
+    return response.data;
+}
 
-    const { email } = credentials;
+export const getProfile = async () => {
+    const response = await axiosInstance.get("auth/profile");
+    return response.data;
+}
 
-    let role = "CANDIDATE";
-    if (email.includes("hr")) role = "HR";
-    else if (email.includes("interviewer")) role = "INTERVIEWER";
-
-    return {
-      token: "fake-jwt-token",
-      user: {
-        id: 1,
-        name: "Fake User",
-        email,
-        role,
-      },
-    };
-  }
-
-  // 🔐 REAL BACKEND (enable later)
-  // const response = await axiosInstance.post("/auth/login", credentials);
-  // return response.data;
-};
+export const logout = async () => {
+    const response = await axiosInstance.post("auth/logout");
+    return response.data;
+}

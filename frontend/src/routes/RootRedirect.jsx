@@ -8,10 +8,10 @@ const ROLE_REDIRECT = {
 };
 
 const RootRedirect = () => {
-  const { isAuthenticated, role, loading } = useAuth();
+  const { isAuthenticated, role, authChecked } = useAuth();
 
-  if (loading) {
-    return <div className="p-6">Loading...</div>;
+  if (!authChecked) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
 
   if (!isAuthenticated) {

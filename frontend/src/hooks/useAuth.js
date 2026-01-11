@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { loginThunk, logout } from "../store/slice/auth.slice";
+import { getProfileThunk, loginThunk, logoutThunk } from "../store/slice/auth.slice";
 
 export const useAuth = () => {
   const dispatch = useDispatch();
@@ -11,6 +11,7 @@ export const useAuth = () => {
     isAuthenticated,
     loading,
     error,
+    authChecked,
   } = useSelector((state) => state.auth);
 
 
@@ -18,9 +19,14 @@ export const useAuth = () => {
     return dispatch(loginThunk(credentials));
   };
 
-  const logoutUser = () => {
-    dispatch(logout());
+  const getProfile = () => {
+    return dispatch(getProfileThunk());
   };
+
+  const logout = () => {
+    return dispatch(logoutThunk());
+  };
+
 
   return {
     user,
@@ -29,7 +35,9 @@ export const useAuth = () => {
     isAuthenticated,
     loading,
     error,
+    authChecked,
     login,
-    logout: logoutUser,
+    getProfile,
+    logout,
   };
 };

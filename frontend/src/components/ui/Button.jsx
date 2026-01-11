@@ -1,10 +1,13 @@
 import { ButtonStyles } from "../../styles/ui";
+import { Loader2 } from "lucide-react";
 
 export const Button = ({
   children,
   variant = "primary",
   loading,
   className = "",
+  icon: Icon,
+  iconPosition = "left",
   ...props
 }) => {
   const baseStyle = ButtonStyles.base;
@@ -16,7 +19,18 @@ export const Button = ({
       disabled={loading || props.disabled}
       {...props}
     >
-      {loading ? "Loading..." : children}
+      {loading ? (
+        <>
+          <Loader2 className="w-4 h-4 animate-spin" />
+          <span>Loading...</span>
+        </>
+      ) : (
+        <>
+          {Icon && iconPosition === "left" && <Icon className="w-4 h-4" />}
+          {children}
+          {Icon && iconPosition === "right" && <Icon className="w-4 h-4" />}
+        </>
+      )}
     </button>
   );
 };
