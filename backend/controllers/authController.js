@@ -82,7 +82,7 @@ const login = asyncHandler(async (req, res) => {
   // Generate Token
   generateToken(res, user._id);
 
-  res.status(201).json({
+  res.status(200).json({
     success: true,
     data: {
       id: user._id,

@@ -4,8 +4,10 @@ dotenv.config();
 import connectDB from "./config/connectDB.js";
 import cors from "cors";
 import errorHandler from "./middleware/errorHandler.js";
-import authRouter from "./routes/authRoutes.js";
 import cookieParser from "cookie-parser";
+
+import authRouter from "./routes/authRoutes.js";
+import jobsRoutes from "./routes/jobsRoutes.js";
 
 const app = express();
 
@@ -27,6 +29,9 @@ app.use(cookieParser());
 //Routes
 
 app.use("/api/auth", authRouter);
+app.use("/api/jobs", jobsRoutes);
+// app.use("/api/application", applicationRoutes);
+// app.use("/api/interviews", interviewRoutes);
 
 app.use(errorHandler);
 

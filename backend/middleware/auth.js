@@ -12,7 +12,6 @@ const protect = async (req, res, next) => {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = await User.findById(decoded.userId).select("-password");
-      console.log(decoded);
       next();
     } catch (error) {
       res.status(401);
@@ -24,4 +23,20 @@ const protect = async (req, res, next) => {
   }
 };
 
-export { protect };
+const authorize = (...allowedRoles) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      res.status(401);
+      throw new Error("Not Authenticated");
+    }
+
+    if (!allowedRoles.includes(req.user.role)) {
+      res.status(403);
+      throw new Error("Access denied");
+    }
+
+    next();
+  };
+};
+
+export { protect, authorize };
