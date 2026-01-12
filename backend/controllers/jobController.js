@@ -4,7 +4,7 @@ import { EMPLOYMENT_TYPE, JOB_STATUS } from "../constants/job.js";
 
 // @dec Create new Job
 // @route POST/api/jobs
-// @access HR Only
+// @access Private (HR Only)
 const createJob = asyncHandler(async (req, res) => {
   const { title, description, location, employmentType, experience } = req.body;
 
@@ -27,7 +27,7 @@ const createJob = asyncHandler(async (req, res) => {
 
 // @dec update Job
 // @route Put/api/jobs/:id
-// @access HR Only
+// @access Private (Private (HR Only))
 const updateJob = asyncHandler(async (req, res) => {
   const job = await Job.findById(req.params.id);
 
@@ -70,9 +70,34 @@ const updateJob = asyncHandler(async (req, res) => {
   });
 });
 
+// @dec Get all jobs created by logged-in HR
+// @route GET /api/jobs/:id
+// @access Private (HR Only)
+const getAllJobsCreatedByHr = asyncHandler(async (req, res) => {
+  console.log(req.user);
+  const hrId = req.user._id;
+
+  const jobs = await Job.find({ createdBy: hrId })
+    .populate({ path: "createdBy", select: "firstName lastName email" })
+    .sort({ createdAt: -1 })
+    .lean();
+
+  if (!jobs) {
+    res.status(404);
+    throw new Error("Job not found");
+  }
+
+  res.status(200).json({
+    success: true,
+    count: jobs.length,
+    data: jobs,
+    message: "Jobs fetched successfully",
+  });
+});
+
 // @dec Delete Job
 // @route DELETE/api/jobs
-// @access Hr Only
+// @access Private (HR Only)
 const deleteJob = asyncHandler(async (req, res) => {
   const job = await Job.findById(req.params.id);
 
@@ -91,7 +116,7 @@ const deleteJob = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     success: true,
-    message: "Job deleted successfully",
+    message: "The job posting was removed successfully",
   });
 });
 
@@ -99,9 +124,16 @@ const deleteJob = asyncHandler(async (req, res) => {
 // @route GET/api/jobs
 // @access Public
 const getAllJobs = asyncHandler(async (req, res) => {
-  const jobs = await Job.find({})
-    .populate("createdBy", "name email")
-    .sort({ createdAt: -1 });
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+
+  const jobs = await Job.find()
+    .populate({ path: "createdBy", select: "firstName lastName email" })
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
+    .lean();
 
   res.status(200).json({
     success: true,
@@ -114,10 +146,9 @@ const getAllJobs = asyncHandler(async (req, res) => {
 // @route GET/api/jobs/:id
 // @access Public
 const getJobById = asyncHandler(async (req, res) => {
-  const job = await Job.findById(req.params.id).populate(
-    "createdBy",
-    "name email"
-  );
+  const job = await Job.findById(req.params.id)
+    .populate({ path: "createdBy", select: "firstName lastName email" })
+    .lean();
 
   if (!job) {
     res.status(404);
@@ -130,4 +161,11 @@ const getJobById = asyncHandler(async (req, res) => {
   });
 });
 
-export { createJob, deleteJob, updateJob, getAllJobs, getJobById };
+export {
+  createJob,
+  deleteJob,
+  updateJob,
+  getAllJobs,
+  getJobById,
+  getAllJobsCreatedByHr,
+};

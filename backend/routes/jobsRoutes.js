@@ -9,6 +9,7 @@ import {
   deleteJob,
   getAllJobs,
   getJobById,
+  getAllJobsCreatedByHr,
 } from "../controllers/jobController.js";
 import validate from "../middleware/validate.js";
 
@@ -86,6 +87,7 @@ router.post(
   createJob
 );
 
+router.get("/my-jobs", protect, authorize(ROLES.HR), getAllJobsCreatedByHr);
 router.get("/", getAllJobs);
 
 router.get("/:id", getJobById);
