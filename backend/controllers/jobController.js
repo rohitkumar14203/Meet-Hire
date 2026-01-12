@@ -26,7 +26,7 @@ const createJob = asyncHandler(async (req, res) => {
 });
 
 // @dec update Job
-// @route Put/api/jobs
+// @route Put/api/jobs/:id
 // @access HR Only
 const updateJob = asyncHandler(async (req, res) => {
   const job = await Job.findById(req.params.id);
@@ -45,18 +45,19 @@ const updateJob = asyncHandler(async (req, res) => {
   const { title, description, location, employmentType, experience, status } =
     req.body;
 
-  job.title = title;
-  job.description = description;
-  job.location = location;
-  job.employmentType = employmentType;
-  job.experience = experience;
+  // Update fields only if provided
+  if (title !== undefined) job.title = title;
+  if (description !== undefined) job.description = description;
+  if (location !== undefined) job.location = location;
+  if (employmentType !== undefined) job.employmentType = employmentType;
+  if (experience !== undefined) job.experience = experience;
 
-  if (status && !Object.values(JOB_STATUS).includes(status)) {
-    res.status(400);
-    throw new Error("Invalid job status");
-  }
-  // status ON / OFF
-  if (status) {
+  // Validate and update status if provided
+  if (status !== undefined) {
+    if (!Object.values(JOB_STATUS).includes(status)) {
+      res.status(400);
+      throw new Error("Invalid job status");
+    }
     job.status = status;
   }
 
@@ -94,4 +95,39 @@ const deleteJob = asyncHandler(async (req, res) => {
   });
 });
 
-export { createJob, deleteJob, updateJob };
+// @dec Get All Jobs
+// @route GET/api/jobs
+// @access Public
+const getAllJobs = asyncHandler(async (req, res) => {
+  const jobs = await Job.find({})
+    .populate("createdBy", "name email")
+    .sort({ createdAt: -1 });
+
+  res.status(200).json({
+    success: true,
+    count: jobs.length,
+    data: jobs,
+  });
+});
+
+// @dec Get Single Job
+// @route GET/api/jobs/:id
+// @access Public
+const getJobById = asyncHandler(async (req, res) => {
+  const job = await Job.findById(req.params.id).populate(
+    "createdBy",
+    "name email"
+  );
+
+  if (!job) {
+    res.status(404);
+    throw new Error("Job not found");
+  }
+
+  res.status(200).json({
+    success: true,
+    data: job,
+  });
+});
+
+export { createJob, deleteJob, updateJob, getAllJobs, getJobById };
