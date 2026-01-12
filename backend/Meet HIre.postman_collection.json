@@ -7,7 +7,7 @@
 	},
 	"item": [
 		{
-			"name": "New Folder",
+			"name": "auth",
 			"item": [
 				{
 					"name": "register",
@@ -153,7 +153,37 @@
 					"response": []
 				},
 				{
-					"name": "New Request",
+					"name": "candidateLogin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"mark123@test.com\",\r\n    \"password\": \"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "candidate-2",
 					"request": {
 						"method": "GET",
 						"header": []
@@ -161,6 +191,186 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "JOB (HR-ONLY)",
+			"item": [
+				{
+					"name": "editJob",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"frontend (Updated)\",\r\n    \"description\": \"test\",\r\n    \"location\": \"Remote\",\r\n    \"employmentType\": \"CONTRACT\",\r\n    \"experience\": \"3-5 years\",\r\n    \"status\":\"CLOSED\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/jobs/69636cd2e15656a90a5c5946",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"jobs",
+								"69636cd2e15656a90a5c5946"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteJob",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "createJob",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Backend\",\r\n    \"description\": \"test\",\r\n    \"location\": \"Remote\",\r\n    \"employmentType\": \"FULL_TIME\",\r\n    \"experience\": \"3-5 years\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/jobs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"jobs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllJobsCreatedByHr",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/jobs/my-jobs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"jobs",
+								"my-jobs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "changeApplicationStatus",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"status\":\"Shortlisted\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/applications/job/6964cce80258accf07a12c16/status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"applications",
+								"job",
+								"6964cce80258accf07a12c16",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getApplicationForJob",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/applications/job/6964c84ad822ce0d374f85e2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"applications",
+								"job",
+								"6964c84ad822ce0d374f85e2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "getAllJobs",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Apply Job By Candidate",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Backend\",\r\n    \"description\": \"test\",\r\n    \"location\": \"Remote\",\r\n    \"employmentType\": \"FULL_TIME\",\r\n    \"experience\": \"3-5 years\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/applications/6964c444a69b54cfb33a7c2e",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"applications",
+						"6964c444a69b54cfb33a7c2e"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

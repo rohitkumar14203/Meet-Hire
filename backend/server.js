@@ -8,14 +8,14 @@ import cookieParser from "cookie-parser";
 
 import authRouter from "./routes/authRoutes.js";
 import jobsRoutes from "./routes/jobsRoutes.js";
-
+import applicationRoutes from "./routes/applicationRoutes.js";
 const app = express();
 
 connectDB();
 
 app.use(
   cors({
-    origin:["*", "http://localhost:5173"],
+    origin: ["*", "http://localhost:5173"],
     methods: ["GET", "PUT", "POST", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
@@ -30,7 +30,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRouter);
 app.use("/api/jobs", jobsRoutes);
-// app.use("/api/application", applicationRoutes);
+app.use("/api/applications", applicationRoutes);
 // app.use("/api/interviews", interviewRoutes);
 
 app.use(errorHandler);

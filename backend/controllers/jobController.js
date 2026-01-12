@@ -74,7 +74,6 @@ const updateJob = asyncHandler(async (req, res) => {
 // @route GET /api/jobs/:id
 // @access Private (HR Only)
 const getAllJobsCreatedByHr = asyncHandler(async (req, res) => {
-  console.log(req.user);
   const hrId = req.user._id;
 
   const jobs = await Job.find({ createdBy: hrId })
@@ -82,7 +81,7 @@ const getAllJobsCreatedByHr = asyncHandler(async (req, res) => {
     .sort({ createdAt: -1 })
     .lean();
 
-  if (!jobs) {
+  if (jobs.length === 0) {
     res.status(404);
     throw new Error("Job not found");
   }
@@ -134,6 +133,11 @@ const getAllJobs = asyncHandler(async (req, res) => {
     .skip(skip)
     .limit(limit)
     .lean();
+
+  if (jobs.length === 0) {
+    res.status(404);
+    throw new Error("Job not found");
+  }
 
   res.status(200).json({
     success: true,
