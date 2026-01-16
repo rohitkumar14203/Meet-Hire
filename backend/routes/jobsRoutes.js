@@ -10,6 +10,7 @@ import {
   getAllJobs,
   getJobById,
   getAllJobsCreatedByHr,
+  getJobsWithApplication,
 } from "../controllers/jobController.js";
 import validate from "../middleware/validate.js";
 
@@ -87,11 +88,30 @@ router.post(
   createJob
 );
 
+// ================= HR-specific routes =================
+
+// HR: jobs created by logged-in HR
 router.get("/my-jobs", protect, authorize(ROLES.HR), getAllJobsCreatedByHr);
+
+// HR: jobs that have applications
+router.get(
+  "/with-applications",
+  protect,
+  authorize(ROLES.HR),
+  getJobsWithApplication
+);
+
+// ================= Public routes =================
+
+// Public: get all jobs
 router.get("/", getAllJobs);
 
+// ================= Dynamic routes (ALWAYS LAST) =================
+
+// Public: get single job by ID
 router.get("/:id", getJobById);
 
+// HR: update job
 router.put(
   "/:id",
   protect,
@@ -101,6 +121,7 @@ router.put(
   updateJob
 );
 
+// HR: delete job
 router.delete("/:id", protect, authorize(ROLES.HR), deleteJob);
 
 export default router;

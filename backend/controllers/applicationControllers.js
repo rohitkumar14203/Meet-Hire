@@ -10,7 +10,7 @@ const applyForJob = asyncHandler(async (req, res) => {
   const { jobId } = req.params;
   const candidateId = req.user._id;
 
-  const job = await Job.findById(jobId);
+  const job = await Job.findById(jobId); 
 
   if (!job) {
     res.status(404);
@@ -60,11 +60,6 @@ const getApplicationForJob = asyncHandler(async (req, res) => {
     throw new Error("Application not found");
   }
 
-  if (job.length === 0) {
-    res.status(404);
-    throw new Error("Application not found");
-  }
-
   res.status(200).json({
     success: true,
     count: applications.length,
@@ -73,10 +68,18 @@ const getApplicationForJob = asyncHandler(async (req, res) => {
   });
 });
 
+// @desc    Update Candidate Status
+// @route   PATCH /api/applications/:id/status"
+// @access  Private (HR)
 const updateCandidateStatus = asyncHandler(async (req, res) => {
   const { id } = req.params; // application id
   const { status } = req.body;
   const hrId = req.user._id;
+
+  if (!Object.values(APPLICATION_STATUS).includes(status)) {
+    res.status(400);
+    throw new Error("Invalid application status");
+  }
 
   const application = await Application.findById(id).populate("job");
 
@@ -89,6 +92,11 @@ const updateCandidateStatus = asyncHandler(async (req, res) => {
     res.status(403);
     throw new Error("Not authorized to update this application");
   }
+  const normalizedStatus = status.toLowerCase();
+  if (application.status === status) {
+    res.status(400);
+    throw new Error(`Application already has ${normalizedStatus} status`);
+  }
 
   application.status = status;
   await application.save();
@@ -100,35 +108,6 @@ const updateCandidateStatus = asyncHandler(async (req, res) => {
   });
 });
 
-// @desc    Get all applications for logged-in candidate
-// @route   GET /api/applications/my-applications
-// @access  Private (Candidate)
-const getCandidateApplications = asyncHandler(async (req, res) => {
-  const candidateId = req.user._id;
 
-  const applications = await Application.find({ candidate: candidateId })
-    .populate({
-      path: "job",
-      select: "title location description employmentType experience createdBy status",
-      populate: {
-        path: "createdBy",
-        select: "firstName lastName email",
-      },
-    })
-    .sort({ createdAt: -1 })
-    .lean();
 
-  res.status(200).json({
-    success: true,
-    count: applications.length,
-    data: applications,
-    message: "Applications fetched successfully",
-  });
-});
-
-export { 
-  applyForJob, 
-  getApplicationForJob, 
-  updateCandidateStatus,
-  getCandidateApplications 
-};
+export { applyForJob, getApplicationForJob, updateCandidateStatus };
