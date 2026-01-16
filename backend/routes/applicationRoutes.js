@@ -9,13 +9,22 @@ import { ROLES } from "../constants/roles.js";
 
 const router = express.Router();
 
-router.post("/:jobId", protect, authorize(ROLES.CANDIDATE), applyForJob);
+// ================= HR routes =================
+
+// HR: get all applications for a job
 router.get("/job/:jobId", protect, authorize(ROLES.HR), getApplicationForJob);
+
+// HR: update candidate application status
 router.patch(
   "/:id/status",
   protect,
   authorize(ROLES.HR),
   updateCandidateStatus
 );
+
+// ================= Candidate routes =================
+
+// Candidate: apply for a job
+router.post("/:jobId", protect, authorize(ROLES.CANDIDATE), applyForJob);
 
 export default router;
