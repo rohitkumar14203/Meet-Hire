@@ -82,11 +82,8 @@ const getAllJobsCreatedByHr = asyncHandler(async (req, res) => {
     .lean();
 
   if (jobs.length === 0) {
-    res.status(200).json({
-      success: true,
-      count: jobs.length,
-      data: jobs,
-    });
+    res.status(404);
+    throw new Error("Job not found");
   }
 
   res.status(200).json({
@@ -168,51 +165,6 @@ const getJobById = asyncHandler(async (req, res) => {
   });
 });
 
-// @desc    Get all jobs created by HR that have applications
-// @route   GET /api/jobs/with-applications
-// @access  Private (HR)
-
-const getJobsWithApplication = asyncHandler(async (req, res) => {
-  const hrId = req.user._id;
-
-  const jobs = await Job.aggregate([
-    {
-      $match: { createdBy: hrId },
-    },
-
-    {
-      $lookup: {
-        from: "applications",
-        localField: "_id",
-        foreignField: "job",
-        as: "applications",
-      },
-    },
-
-    {
-      $addFields: {
-        applicationCount: { $size: "$applications" },
-      },
-    },
-    {
-      $match: {
-        applicationCount: { $gt: 0 },
-      },
-    },
-    {
-      $project: { applications: 0, __v: 0 },
-    },
-    { $sort: { createdAt: -1 } },
-  ]);
-
-  res.status(200).json({
-    success: true,
-    count: jobs.length,
-    data: jobs,
-    message: "Jobs with applications fetched successfully",
-  });
-});
-
 export {
   createJob,
   deleteJob,
@@ -220,5 +172,4 @@ export {
   getAllJobs,
   getJobById,
   getAllJobsCreatedByHr,
-  getJobsWithApplication,
 };
