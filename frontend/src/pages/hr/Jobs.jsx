@@ -1,76 +1,161 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Layout } from "../../components/layout/Layout";
-import { Button } from "../../components/ui/Button";
-import { Modal } from "../../components/ui/Modal";
-import { Table } from "../../components/ui/Table";
-import { StatusBadge } from "../../components/ui/StatusBadge";
+import { Button } from "../../components/common/Button";
+import { Modal } from "../../components/common/Modal";
+import { Table } from "../../components/common/Table";
+import { StatusBadge } from "../../components/common/StatusBadge";
 import JobForm from "../../components/hr/JobForm";
-import { Plus, Briefcase, MapPin, Building2, Users, Calendar } from "lucide-react";
+import { Plus, Briefcase, MapPin, Building2, Users, Calendar, Pencil, Trash2 } from "lucide-react";
+import { useJobs } from "../../hooks/useJobs";
+import { Alert } from "../../components/common/Alert";
+import { DeleteConfirm } from "../../components/common/DeleteConfirm";
+import { StatusConfirm } from "../../components/common/StatusConfirm";
+import { StatusDropdown } from "../../components/common/StatusDropdown";
 
 const Jobs = () => {
+  const { jobs, loading, error, loadJobs, createJob, updateJob, deleteJob } = useJobs();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [jobs, setJobs] = useState([
-    {
-      id: 1,
-      title: "Senior Frontend Developer",
-      department: "Engineering",
-      location: "New York, Remote",
-      type: "Full Time",
-      applicants: 24,
-      postedDate: "2 days ago",
-      status: "Approved",
-    },
-    {
-      id: 2,
-      title: "Product Manager",
-      department: "Product",
-      location: "San Francisco",
-      type: "Full Time",
-      applicants: 18,
-      postedDate: "1 week ago",
-      status: "Approved",
-    },
-    {
-      id: 3,
-      title: "UI/UX Designer",
-      department: "Design",
-      location: "Remote",
-      type: "Contract",
-      applicants: 31,
-      postedDate: "3 days ago",
-      status: "Pending",
-    },
-    {
-      id: 4,
-      title: "Backend Developer",
-      department: "Engineering",
-      location: "Austin, TX",
-      type: "Full Time",
-      applicants: 12,
-      postedDate: "5 days ago",
-      status: "Approved",
-    },
-  ]);
+  const [editingJob, setEditingJob] = useState(null);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [jobToDelete, setJobToDelete] = useState(null);
+  const [isStatusOpen, setIsStatusOpen] = useState(false);
+  const [jobToUpdateStatus, setJobToUpdateStatus] = useState(null);
+
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+  const [jobToChangeStatus, setJobToChangeStatus] = useState(null);
+  const [nextStatus, setNextStatus] = useState(null);
+
+
+  useEffect(() => {
+    loadJobs();
+  }, []);
 
   const handleCreateJob = async (jobData) => {
-    setLoading(true);
-    console.log("New Job Data:", jobData);
+    const result = await createJob(jobData);
 
-    // Simulate API call
-    setTimeout(() => {
-      const newJob = {
-        id: jobs.length + 1,
-        ...jobData,
-        applicants: 0,
-        postedDate: "Just now",
-        status: "Pending",
-      };
-      setJobs([newJob, ...jobs]);
-      setLoading(false);
+    if (result.success) {
       setIsModalOpen(false);
-    }, 800);
+      setEditingJob(null);
+    } else {
+      console.error("Job creation failed:", result.error);
+    }
   };
+
+  const handleUpdateJob = async (jobData) => {
+    const result = await updateJob(editingJob._id, jobData);
+
+    if (result.success) {
+      setIsModalOpen(false);
+      setEditingJob(null);
+    } else {
+      console.error("Job update failed:", result.error);
+    }
+  };
+
+  const handleEditJob = (job) => {
+    setEditingJob(job);
+    setIsModalOpen(true);
+  };
+
+  const confirmDeleteJob = async () => {
+    if (!jobToDelete) return;
+
+    const result = await deleteJob(jobToDelete._id);
+
+    if (result.success) {
+      setIsDeleteOpen(false);
+      setJobToDelete(null);
+    } else {
+      console.error("Job deletion failed:", result.error);
+    }
+  };
+
+  const handleStatusSelect = (job, selectedStatus) => {
+    // If same status → do nothing
+    if (job.status === selectedStatus) return;
+
+    // Only confirm when closing job
+    if (selectedStatus === "CLOSED") {
+      setJobToChangeStatus(job);
+      setNextStatus("CLOSED");
+      setIsStatusModalOpen(true);
+    } else {
+      // Opening job can be instant (optional confirm)
+      updateJob(job._id, { status: "OPEN" });
+    }
+  };
+
+
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setEditingJob(null);
+  };
+
+  const confirmStatusChange = async () => {
+    if (!jobToUpdateStatus) return;
+
+    const newStatus =
+      jobToUpdateStatus.status === "OPEN" ? "CLOSED" : "OPEN";
+
+    const result = await updateJob(jobToUpdateStatus._id, {
+      status: newStatus,
+    });
+
+    if (result.success) {
+      setIsStatusOpen(false);
+      setJobToUpdateStatus(null);
+    } else {
+      console.error("Status update failed:", result.error);
+    }
+  };
+
+
+  const getEmploymentTypeLabel = (type) => {
+    const typeMap = {
+      FULL_TIME: "Full Time",
+      PART_TIME: "Part Time",
+      CONTRACT: "Contract",
+      INTERN: "Internship"
+    };
+    return typeMap[type] || type;
+  };
+
+  const confirmCloseJob = async () => {
+    if (!jobToChangeStatus) return;
+
+    const result = await updateJob(jobToChangeStatus._id, {
+      status: nextStatus,
+    });
+
+    if (result.success) {
+      setIsStatusModalOpen(false);
+      setJobToChangeStatus(null);
+      setNextStatus(null);
+    } else {
+      console.error("Failed to update job status");
+    }
+  };
+
+  const getStatusLabel = (status) => {
+    return status === "OPEN" ? "Active" : "Closed";
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) return "Today";
+    if (diffDays === 1) return "Yesterday";
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+    return date.toLocaleDateString();
+  };
+
+
 
   const jobColumns = [
     {
@@ -83,18 +168,18 @@ const Jobs = () => {
           </div>
           <div>
             <p className="font-semibold text-gray-900">{value}</p>
-            <p className="text-xs text-gray-500">{row.type}</p>
+            <p className="text-xs text-gray-500">{getEmploymentTypeLabel(row.employmentType)}</p>
           </div>
         </div>
       ),
     },
     {
-      key: "department",
-      label: "Department",
+      key: "employmentType",
+      label: "Type",
       render: (value) => (
         <div className="flex items-center gap-2 text-gray-700">
           <Building2 className="w-4 h-4 text-gray-400" />
-          {value}
+          {getEmploymentTypeLabel(value)}
         </div>
       ),
     },
@@ -109,29 +194,63 @@ const Jobs = () => {
       ),
     },
     {
-      key: "applicants",
-      label: "Applicants",
+      key: "experience",
+      label: "Experience",
       render: (value) => (
-        <div className="flex items-center gap-2">
-          <Users className="w-4 h-4 text-blue-600" />
-          <span className="font-semibold text-blue-600">{value}</span>
+        <div className="text-gray-700">
+          {value}
         </div>
       ),
     },
     {
-      key: "postedDate",
+      key: "createdAt",
       label: "Posted",
       render: (value) => (
         <div className="flex items-center gap-2 text-gray-600 text-sm">
           <Calendar className="w-4 h-4 text-gray-400" />
-          {value}
+          {formatDate(value)}
         </div>
       ),
     },
     {
       key: "status",
       label: "Status",
-      render: (value) => <StatusBadge status={value} />,
+      render: (value, row) => (
+        <StatusDropdown
+          value={row.status}
+          onChange={(selected) =>
+            handleStatusSelect(row, selected)
+          }
+        />
+      ),
+    },
+    {
+      key: "_id",
+      label: "Actions",
+      render: (value, row) => (
+        <div className="flex gap-2">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => handleEditJob(row)}
+            icon={Pencil}
+          >
+            Edit
+          </Button>
+          <Button
+            variant="danger"
+            size="sm"
+            onClick={() => {
+              setJobToDelete(row);
+              setIsDeleteOpen(true);
+            }}
+            icon={Trash2}
+          >
+            Delete
+          </Button>
+
+        </div>
+      ),
     },
   ];
 
@@ -161,33 +280,92 @@ const Jobs = () => {
         </div>
         <div className="bg-white border border-blue-100 rounded-xl p-4 shadow-sm">
           <p className="text-sm text-gray-600 mb-1">Active Postings</p>
-          <p className="text-2xl font-bold text-green-600">{jobs.filter(j => j.status === "Approved").length}</p>
+          <p className="text-2xl font-bold text-green-600">{jobs.filter(j => j.status === "OPEN").length}</p>
         </div>
         <div className="bg-white border border-blue-100 rounded-xl p-4 shadow-sm">
           <p className="text-sm text-gray-600 mb-1">Total Applicants</p>
-          <p className="text-2xl font-bold text-blue-600">{jobs.reduce((sum, job) => sum + job.applicants, 0)}</p>
+          <p className="text-2xl font-bold text-blue-600">0</p>
         </div>
         <div className="bg-white border border-blue-100 rounded-xl p-4 shadow-sm">
-          <p className="text-sm text-gray-600 mb-1">Pending Review</p>
-          <p className="text-2xl font-bold text-amber-600">{jobs.filter(j => j.status === "Pending").length}</p>
+          <p className="text-sm text-gray-600 mb-1">Closed Jobs</p>
+          <p className="text-2xl font-bold text-amber-600">{jobs.filter(j => j.status === "CLOSED").length}</p>
         </div>
       </div>
 
       {/* Jobs Table */}
       <div className="bg-white rounded-xl border border-blue-100 shadow-sm p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">All Job Postings</h2>
-        <Table columns={jobColumns} data={jobs} emptyMessage="No jobs posted yet" />
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">All Job Postings </h2>
+        {loading ? (
+          <div className="text-center py-8 text-gray-500">Loading jobs...</div>
+        ) : error ? (
+          <div className="text-center py-8 text-red-500">{error}</div>
+        ) : (
+          <Table columns={jobColumns} data={jobs} emptyMessage="No jobs posted yet" />
+        )}
       </div>
 
       {/* Modal + Form */}
       <Modal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title="Create New Job Posting"
+        onClose={handleModalClose}
+        title={editingJob ? "Edit Job Posting" : "Create New Job Posting"}
         size="lg"
       >
-        <JobForm onSubmit={handleCreateJob} loading={loading} />
+        <JobForm
+          key={editingJob?._id || 'new'}
+          onSubmit={editingJob ? handleUpdateJob : handleCreateJob}
+          initialData={editingJob}
+          loading={loading}
+        />
       </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        title="Confirm Deletion"
+        size="sm"
+      >
+        <DeleteConfirm
+          title="Delete Job"
+          description={`Are you sure you want to delete "${jobToDelete?.title}"?`}
+          onCancel={() => setIsDeleteOpen(false)}
+          onConfirm={confirmDeleteJob}
+        />
+      </Modal>
+
+      <Modal
+        isOpen={isStatusModalOpen}
+        onClose={() => setIsStatusModalOpen(false)}
+        title="Confirm Status Change"
+        size="sm"
+      >
+        <div className="space-y-6">
+          <p className="text-gray-700">
+            Are you sure you want to close the job{" "}
+            <span className="font-semibold">
+              "{jobToChangeStatus?.title}"
+            </span>
+            ?
+          </p>
+
+          <div className="flex justify-end gap-3">
+            <Button
+              variant="secondary"
+              onClick={() => setIsStatusModalOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              onClick={confirmCloseJob}
+            >
+              Close Job
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
     </Layout>
   );
 };

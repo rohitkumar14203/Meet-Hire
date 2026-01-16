@@ -1,5 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { Loader } from "../components/common/Loader";
 
 const ROLE_REDIRECT = {
   HR: "/hr/dashboard",
@@ -11,7 +12,9 @@ const RootRedirect = () => {
   const { isAuthenticated, role, authChecked } = useAuth();
 
   if (!authChecked) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return <div className="min-h-screen flex items-center justify-center">
+      <Loader />
+    </div>;
   }
 
   if (!isAuthenticated) {

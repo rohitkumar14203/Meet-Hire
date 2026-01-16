@@ -1,5 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { Loader } from "../components/common/Loader";
 
 export default function ProtectedRoute({ allowedRoles, children }) {
   const { isAuthenticated, role, authChecked } = useAuth();
@@ -8,7 +9,7 @@ export default function ProtectedRoute({ allowedRoles, children }) {
   if (!authChecked) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p>Loading...</p>
+        <Loader>Loading...</Loader>
       </div>
     );
   }

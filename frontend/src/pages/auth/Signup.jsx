@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Button } from "../../components/ui/Button";
-import { Input } from "../../components/ui/Input";
-import { Dropdown } from "../../components/ui/Dropdown";
+import { Button } from "../../components/common/Button";
+import { Input } from "../../components/common/Input";
+import { Dropdown } from "../../components/common/Dropdown";
 import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, User, Briefcase, UserPlus } from "lucide-react";
 

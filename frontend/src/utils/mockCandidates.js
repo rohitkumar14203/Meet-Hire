@@ -13,7 +13,7 @@ export const mockCandidates = [
     email: "bob@example.com",
     role: "Product Manager",
     experience: "7 years",
-    status: "Approved",
+    status: "Shortlisted",
   },
   {
     id: 3,

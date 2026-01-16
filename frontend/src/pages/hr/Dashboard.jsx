@@ -1,9 +1,9 @@
 import { Layout } from "../../components/layout/Layout";
-import { DashboardCard } from "../../components/ui/dashboard/DashboardCard";
-import { Table } from "../../components/ui/Table";
-import { StatsGrid } from "../../components/ui/dashboard/StatsGrid";
-import { StatusBadge } from "../../components/ui/StatusBadge";
-import { Button } from "../../components/ui/Button";
+import { DashboardCard } from "../../components/common/dashboard/DashboardCard";
+import { Table } from "../../components/common/Table";
+import { StatsGrid } from "../../components/common/dashboard/StatsGrid";
+import { StatusBadge } from "../../components/common/StatusBadge";
+import { Button } from "../../components/common/Button";
 import { 
   Briefcase, 
   Users, 

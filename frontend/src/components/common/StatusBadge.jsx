@@ -31,7 +31,7 @@ const statusConfig = {
         border: "border-blue-200",
         icon: HourglassIcon 
     },
-    Approved: { 
+    Shortlisted: { 
         bg: "bg-green-50", 
         text: "text-green-700", 
         border: "border-green-200",

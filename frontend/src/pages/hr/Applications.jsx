@@ -1,14 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { mockCandidates } from "../../utils/mockCandidates";
 import { CandidateTable } from "../../components/hr/CandidateTable";
 import { Layout } from "../../components/layout/Layout";
-import { SearchBar } from "../../components/ui/SearchBar";
-import { Dropdown } from "../../components/ui/Dropdown";
+import { SearchBar } from "../../components/common/SearchBar";
+import { Dropdown } from "../../components/common/Dropdown";
 import { Users, Filter, TrendingUp } from "lucide-react";
+import { useApplications } from "../../hooks/useApplications";
+import { useParams } from "react-router-dom";
 
-export const Candidates = () => {
+export const Applications = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const { applications, loading, error, loadApplications } = useApplications();
+
+  const { jobId } = useParams();
+
+
+  useEffect(() => {
+    if (jobId) {
+      loadApplications(jobId);
+    }
+  }, [jobId]);
 
   const statusOptions = [
     { value: "", label: "All Statuses" },
@@ -20,24 +32,31 @@ export const Candidates = () => {
   ];
 
   // Filter candidates based on search and status
-  const filteredCandidates = mockCandidates.filter((candidate) => {
-    const matchesSearch = 
-      candidate.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      candidate.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      candidate.role.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesStatus = !statusFilter || candidate.status === statusFilter;
-    
+  const filteredCandidates = applications.filter((app) => {
+    const fullName =
+      `${app.candidate.firstName} ${app.candidate.lastName}`.toLowerCase();
+
+    const matchesSearch =
+      fullName.includes(searchQuery.toLowerCase()) ||
+      app.candidate.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      app.job.title.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesStatus =
+      !statusFilter || app.status === statusFilter;
+
     return matchesSearch && matchesStatus;
   });
 
+
   // Calculate stats
   const stats = {
-    total: mockCandidates.length,
+    total: applications.length,
     pending: mockCandidates.filter(c => c.status === "Pending").length,
     approved: mockCandidates.filter(c => c.status === "Approved").length,
     rejected: mockCandidates.filter(c => c.status === "Rejected").length,
   };
+
+
 
   return (
     <Layout>
@@ -65,7 +84,7 @@ export const Candidates = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="bg-white border border-blue-100 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <div>
@@ -77,7 +96,7 @@ export const Candidates = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="bg-white border border-blue-100 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <div>
@@ -89,7 +108,7 @@ export const Candidates = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="bg-white border border-blue-100 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <div>
