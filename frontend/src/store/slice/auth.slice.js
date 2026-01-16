@@ -91,7 +91,7 @@ export const authSlice = createSlice({
       .addCase(getProfileThunk.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.data;
-        state.role = action.payload.data.role;
+        state.role = action.payload.data.role.toUpperCase(); // role HR, CANDIDATE, INTERVIEWER
         state.isAuthenticated = true;
         state.authChecked = true;
       })

@@ -29,7 +29,7 @@ app.use(cookieParser());
 //Routes
 
 app.use("/api/auth", authRouter);
-app.use("/api/hr/jobs", jobsRoutes);
+app.use("/api/jobs", jobsRoutes);
 app.use("/api/applications", applicationRoutes);
 // app.use("/api/interviews", interviewRoutes);
 

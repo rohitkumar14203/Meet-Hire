@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
-import { Button } from "../../components/ui/Button";
-import { Input } from "../../components/ui/Input";
+import { Button } from "../../components/common/Button";
+import { Input } from "../../components/common/Input";
 import { useNavigate, Link } from "react-router-dom";
 import { Mail, Lock, LogIn, Briefcase } from "lucide-react";
 
@@ -20,12 +20,12 @@ export default function Login() {
             login({ email, password });
         }
     };
+useEffect(() => {
+  if (authChecked && isAuthenticated) {
+    navigate("/redirect", { replace: true });
+  }
+}, [authChecked, isAuthenticated, navigate]);
 
-    useEffect(() => {
-        if (authChecked && isAuthenticated) {
-            navigate("/");
-        }
-    }, [isAuthenticated, authChecked, navigate]);
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-100 p-4">
@@ -106,13 +106,6 @@ export default function Login() {
                         </Link>
                     </div>
                 </form>
-
-                {/* Demo Credentials */}
-                <div className="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm">
-                    <p className="font-semibold text-blue-900 mb-2">👤 Demo Credentials:</p>
-                    <p className="text-blue-700">Email: <code className="bg-white px-2 py-1 rounded">hr@test.com</code></p>
-                    <p className="text-blue-700">Password: <code className="bg-white px-2 py-1 rounded">anything</code></p>
-                </div>
             </div>
         </div>
     );

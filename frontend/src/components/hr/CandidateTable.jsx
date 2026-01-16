@@ -1,6 +1,6 @@
-import { Table } from "../ui/Table";
-import { StatusBadge } from "../ui/StatusBadge";
-import { Button } from "../ui/Button";
+import { Table } from "../common/Table";
+import { StatusBadge } from "../common/StatusBadge";
+import { Button } from "../common/Button";
 import { Mail, Briefcase, Calendar, Eye } from "lucide-react";
 
 const columns = [

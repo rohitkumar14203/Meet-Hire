@@ -13,7 +13,7 @@ const menuConfig = {
   HR: [
     { label: "Dashboard", path: "/hr/dashboard", icon: LayoutDashboard },
     { label: "Jobs", path: "/hr/jobs", icon: Briefcase },
-    { label: "Candidates", path: "/hr/candidates", icon: Users },
+    { label: "Applications", path: "/hr/applications", icon: Users },
     { label: "Interviews", path: "/hr/interviews", icon: Calendar },
   ],
   INTERVIEWER: [

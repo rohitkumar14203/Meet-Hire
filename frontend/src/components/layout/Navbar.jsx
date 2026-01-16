@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
-import { SearchBar } from "../ui/SearchBar";
+import { SearchBar } from "../common/SearchBar";
 import { useState } from "react";
 import { Bell, LogOut, User, ChevronDown, Briefcase } from "lucide-react";
 
