@@ -100,6 +100,7 @@ const updateCandidateStatus = asyncHandler(async (req, res) => {
   });
 });
 
+<<<<<<< HEAD
 // @desc    Get all applications for logged-in candidate
 // @route   GET /api/applications/my-applications
 // @access  Private (Candidate)
@@ -132,3 +133,8 @@ export {
   updateCandidateStatus,
   getCandidateApplications 
 };
+=======
+
+
+export { applyForJob, getApplicationForJob, updateCandidateStatus };
+>>>>>>> 3a9c92a14a065d795c4e6dab3eef798f61400da6
