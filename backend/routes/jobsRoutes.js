@@ -10,6 +10,7 @@ import {
   getAllJobs,
   getJobById,
   getAllJobsCreatedByHr,
+  getJobsWithApplications,
 } from "../controllers/jobController.js";
 import validate from "../middleware/validate.js";
 
@@ -78,28 +79,49 @@ const updateJobValidation = [
     .withMessage("Invalid job status"),
 ];
 
+// =================== HR Routes ===================
+
+// Create a job
 router.post(
   "/",
   protect,
   authorize(ROLES.HR),
   createJobValidation,
   validate,
-  createJob
+  createJob,
 );
 
+// Get jobs created by logged-in HR
 router.get("/my-jobs", protect, authorize(ROLES.HR), getAllJobsCreatedByHr);
+router.get(
+  "/with-applications",
+  protect,
+  authorize(ROLES.HR),
+  getJobsWithApplications,
+);
+
+// =================== Public Routes ===================
+
+// Get all jobs (public)
 router.get("/", getAllJobs);
 
+// Get single job by ID (public)
 router.get("/:id", getJobById);
 
+// =================== HR Routes ===================
+
+// Update job
 router.put(
   "/:id",
   protect,
   authorize(ROLES.HR),
   updateJobValidation,
   validate,
-  updateJob
+  updateJob,
 );
+
+// Delete job
+router.delete("/:id", protect, authorize(ROLES.HR), deleteJob);
 
 router.delete("/:id", protect, authorize(ROLES.HR), deleteJob);
 
