@@ -100,7 +100,6 @@ const updateCandidateStatus = asyncHandler(async (req, res) => {
   });
 });
 
-<<<<<<< HEAD
 // @desc    Get all applications for logged-in candidate
 // @route   GET /api/applications/my-applications
 // @access  Private (Candidate)
@@ -110,7 +109,8 @@ const getCandidateApplications = asyncHandler(async (req, res) => {
   const applications = await Application.find({ candidate: candidateId })
     .populate({
       path: "job",
-      select: "title location description employmentType experience createdBy status",
+      select:
+        "title location description employmentType experience createdBy status",
       populate: {
         path: "createdBy",
         select: "firstName lastName email",
@@ -127,14 +127,9 @@ const getCandidateApplications = asyncHandler(async (req, res) => {
   });
 });
 
-export { 
-  applyForJob, 
-  getApplicationForJob, 
+export {
+  applyForJob,
+  getApplicationForJob,
   updateCandidateStatus,
-  getCandidateApplications 
+  getCandidateApplications,
 };
-=======
-
-
-export { applyForJob, getApplicationForJob, updateCandidateStatus };
->>>>>>> 3a9c92a14a065d795c4e6dab3eef798f61400da6
