@@ -1,6 +1,5 @@
 import { ButtonStyles } from "../../styles/ui";
 import { Loader2 } from "lucide-react";
-import { Loader } from "./Loader";
 
 export const Button = ({
   children,
@@ -31,9 +30,7 @@ export const Button = ({
       {loading ? (
         <>
           <Loader2 className="w-4 h-4 animate-spin" />
-          <span>
-            <Loader />
-          </span>
+          <span>Loading...</span>
         </>
       ) : (
         <>
